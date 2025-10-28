@@ -1,0 +1,14 @@
+# 核心依赖
+openai
+python-dotenv
+pyyaml
+flask
+flask-cors
+aiohttp
+matplotlib
+numpy
+
+# 生产环境依赖
+gunicorn
+gevent
+
