@@ -12,3 +12,8 @@ numpy
 gunicorn
 gevent
 
+python-pptx
+pandas
+scikit-learn
+python-Levenshtein
+nltk

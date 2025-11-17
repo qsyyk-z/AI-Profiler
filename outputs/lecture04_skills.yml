@@ -1,0 +1,74 @@
+skills:
+- 0: 能够形式化定义确定有限自动机（DFA）的五元组 A = (Q, Σ, δ, q0, F) 及其组成部分
+- 1: 能够识别并区分 DFA 的有限状态集 Q、输入符号集 Σ、转移函数 δ、开始状态 q0 和终态集合 F
+- 2: 能够根据形式定义，构建 DFA 的转移函数表
+- 3: 能够根据 DFA 的形式定义，绘制其转移图表示
+- 4: 能够理解并描述 DFA 如何接受输入符号串
+- 5: 能够模拟 DFA 的运行过程，对给定的输入串判断其是否被接受
+- 6: 能够形式化定义非确定有限自动机（NFA）的五元组 A = (Q, Σ, δ, q0, F)
+- 7: 能够识别并区分 NFA 的有限状态集 Q、输入符号集 Σ、转移函数 δ、开始状态 q0 和终态集合 F
+- 8: 能够根据形式定义，构建 NFA 的转移函数表
+- 9: 能够根据 NFA 的形式定义，绘制其转移图表示
+- 10: 能够理解并描述 NFA 如何接受输入符号串，包括 ε-转移的处理
+- 11: 能够模拟 NFA 的运行过程，对给定的输入串判断其是否被接受
+- 12: 能够阐述 DFA 和 NFA 的等价性，并理解其证明方法
+- 13: 能够将一个 NFA 转换为等价的 DFA
+- 14: 能够形式化定义带 ε-转移的 NFA（ε-NFA）
+- 15: 能够将一个 ε-NFA 转换为等价的 NFA 或 DFA
+- 16: 能够理解 DFA 最小化的目标和意义
+- 17: 能够应用状态等价类划分方法，对给定的 DFA 进行最小化
+- 18: 能够识别并消除 DFA 中的不可达状态
+- 19: 能够设计一个 DFA 或 NFA 来解决具体问题场景（如文本搜索）
+groups:
+  Group1_DFA_Definition:
+    type: Dependency
+    target: 掌握确定有限自动机（DFA）的形式定义及其基本组成部分。
+    skills:
+    - 0
+    - 1
+    - 2
+    - 3
+  Group2_DFA_Operation:
+    type: Progressive
+    target: 理解 DFA 的运行机制，掌握其接受输入串的过程。
+    skills:
+    - 4
+    - 5
+  Group3_NFA_Definition:
+    type: Dependency
+    target: 掌握非确定有限自动机（NFA）的形式定义及其基本组成部分。
+    skills:
+    - 6
+    - 7
+    - 8
+    - 9
+  Group4_NFA_Operation:
+    type: Progressive
+    target: 理解 NFA 的运行机制，掌握其接受输入串的过程。
+    skills:
+    - 10
+    - 11
+  Group5_DFA_NFA_Equivalence:
+    type: Contrast
+    target: 理解 DFA 和 NFA 的等价性及其转换方法。
+    skills:
+    - 12
+    - 13
+  Group6_Epsilon_NFA:
+    type: Dependency
+    target: 掌握带 ε-转移的 NFA 的定义及其转换方法。
+    skills:
+    - 14
+    - 15
+  Group7_DFA_Minimization:
+    type: Application
+    target: 掌握 DFA 最小化的基本方法及其应用。
+    skills:
+    - 16
+    - 17
+    - 18
+  Group8_Application_Design:
+    type: Application
+    target: 能够设计有限自动机解决实际问题。
+    skills:
+    - 19

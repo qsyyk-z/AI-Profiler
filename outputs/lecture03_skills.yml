@@ -1,0 +1,69 @@
+skills:
+- 0: 能够形式化定义正规表达式的语法规则及其组成部分
+- 1: 能够形式化定义正规语言的语义及其与正规表达式的关系
+- 2: 能够理解并应用正规表达式的三种基本运算（联合、连接、闭包）
+- 3: 能够根据正规表达式的语法规则递归构造合法的正规表达式
+- 4: 能够根据正规表达式的语义规则递归推导其对应的语言
+- 5: 能够计算正规表达式的派生运算符（如 L+, L?, Ln）的语义
+- 6: 能够理解并应用正规语言的归纳定义
+- 7: 能够证明一个语言是否为正规语言
+- 8: 能够根据正规表达式的算符优先级正确解析复杂表达式
+- 9: 能够将复杂的正规表达式分解为基本表达式并逐步求解其语义
+- 10: 能够设计满足特定语言需求的正规表达式
+- 11: 能够通过正规表达式验证字符串是否属于某个正规语言
+- 12: 能够比较不同正规表达式的等价性并证明其等价性
+- 13: 能够形式化定义正规语言的代数性质
+- 14: 能够应用正规语言的代数性质简化正规表达式
+- 15: 能够理解并应用正规语言的闭包性质
+- 16: 能够结合正规表达式和正规语言的定义解决实际问题
+groups:
+  Group1_Regular_Definition:
+    type: Dependency
+    target: 掌握正规表达式和正规语言的基本定义及其关系。
+    skills:
+    - 0
+    - 1
+    - 6
+  Group2_Regular_Operations:
+    type: Progressive
+    target: 理解正规表达式的基本运算及其语义，并能够递归推导语言。
+    skills:
+    - 2
+    - 3
+    - 4
+    - 5
+  Group3_Regular_Construction:
+    type: Application
+    target: 能够设计和构造满足特定需求的正规表达式并验证其语义。
+    skills:
+    - 10
+    - 11
+    - 9
+  Group4_Regular_Equivalence:
+    type: Contrast
+    target: 掌握正规表达式的等价性证明及其代数性质的应用。
+    skills:
+    - 12
+    - 13
+    - 14
+  Group5_Regular_Parsing:
+    type: Progressive
+    target: 理解正规表达式的算符优先级并正确解析复杂表达式。
+    skills:
+    - 8
+    - 9
+    - 2
+  Group6_Regular_Closure:
+    type: Application
+    target: 掌握正规语言的闭包性质并应用于实际问题。
+    skills:
+    - 15
+    - 16
+    - 6
+  Group7_Regular_Proof:
+    type: Related
+    target: 能够证明语言的正规性并验证其表达式的正确性。
+    skills:
+    - 7
+    - 12
+    - 14
