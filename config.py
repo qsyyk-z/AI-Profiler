@@ -153,3 +153,4 @@ groups:
         '''
 
 api_token = "eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFM1MTIifQ.eyJqdGkiOiI5MjEwMDk1MCIsInJvbCI6IlJPTEVfUkVHSVNURVIiLCJpc3MiOiJPcGVuWExhYiIsImlhdCI6MTc2MzgyNjA1MCwiY2xpZW50SWQiOiJsa3pkeDU3bnZ5MjJqa3BxOXgydyIsInBob25lIjoiIiwib3BlbklkIjpudWxsLCJ1dWlkIjoiZGU0MjBlN2ItMzc3MC00YjRkLTlkMjMtNWE3ZGVkZGE5MTE0IiwiZW1haWwiOiIiLCJleHAiOjE3NjUwMzU2NTB9._HLZRkLrAtRUqu5eCkmkXLlzDoX0qc0v1IRrC9BRdMo8nfMdhSSio1wU7z9cJqL-qufThsdKvyby9lYGiFf6Uw"
+pdf_url = "https://raw.githubusercontent.com/qsyyk-z/AI-Profiler/refs/heads/main/knowledges/lecture03.pdf"

@@ -192,26 +192,3 @@ class OCR_client:
             logger.error(f"下载和提取markdown文件时出错: {e}")
             raise
     
-    def batch_extract(self, pdf_urls: list) -> list:
-        """
-        批量处理PDF文件URL列表
-        
-        Args:
-            pdf_urls: PDF文件URL列表
-            
-        Returns:
-            list: 生成的markdown文件路径列表
-        """
-        logger.info(f"开始批量处理，共 {len(pdf_urls)} 个URL")
-        
-        result_files = []
-        for pdf_url in pdf_urls:
-            try:
-                md_file = self.extract_pdf_to_markdown(pdf_url)
-                result_files.append(md_file)
-            except Exception as e:
-                logger.error(f"处理URL {pdf_url} 失败: {e}")
-                continue
-        
-        logger.info(f"批量处理完成，成功生成 {len(result_files)} 个markdown文件")
-        return result_files

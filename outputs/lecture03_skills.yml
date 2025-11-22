@@ -1,69 +1,87 @@
 skills:
-- 0: 能够形式化定义正规表达式的语法规则及其组成部分
-- 1: 能够形式化定义正规语言的语义及其与正规表达式的关系
-- 2: 能够理解并应用正规表达式的三种基本运算（联合、连接、闭包）
-- 3: 能够根据正规表达式的语法规则递归构造合法的正规表达式
-- 4: 能够根据正规表达式的语义规则递归推导其对应的语言
-- 5: 能够计算正规表达式的派生运算符（如 L+, L?, Ln）的语义
-- 6: 能够理解并应用正规语言的归纳定义
-- 7: 能够证明一个语言是否为正规语言
-- 8: 能够根据正规表达式的算符优先级正确解析复杂表达式
-- 9: 能够将复杂的正规表达式分解为基本表达式并逐步求解其语义
-- 10: 能够设计满足特定语言需求的正规表达式
-- 11: 能够通过正规表达式验证字符串是否属于某个正规语言
-- 12: 能够比较不同正规表达式的等价性并证明其等价性
-- 13: 能够形式化定义正规语言的代数性质
-- 14: 能够应用正规语言的代数性质简化正规表达式
-- 15: 能够理解并应用正规语言的闭包性质
-- 16: 能够结合正规表达式和正规语言的定义解决实际问题
+- '0: 能够形式化定义正规表达式和正规语言的基本概念'
+- '1: 能够理解正规表达式的语法规则，包括基础和归纳定义'
+- '2: 能够理解正规表达式的语义规则，包括基础和归纳定义'
+- '3: 能够运用正规表达式表示正规语言'
+- '4: 能够熟练应用正规表达式的三种代数运算：联合、连接和闭包'
+- '5: 能够根据给定的正规表达式计算其对应的语言'
+- '6: 能够设计满足特定语言需求的正规表达式'
+- '7: 能够理解和应用正规表达式的算符优先级'
+- '8: 能够掌握正规表达式的派生运算符及其定义'
+- '9: 能够理解正规语言的归纳定义'
+- '10: 能够利用正规表达式定义正规语言'
+- '11: 能够理解并应用正规表达式的代数定律，包括交换律、结合律、分配律等'
+- '12: 能够通过正规表达式的具体化和一般化验证代数定律'
+- '13: 能够设计满足特定条件的复杂正规表达式'
+- '14: 能够分析和验证正规表达式的等价性'
+- '15: 能够通过正规表达式解决实际问题，如匹配特定模式或验证字符串属性'
+- '16: 能够理解正规表达式与语言的关系，并证明其正确性'
+- '17: 能够根据语言需求设计包含复杂条件的正规表达式'
+- '18: 能够理解正规表达式的应用场景，如词法分析器中的使用'
 groups:
-  Group1_Regular_Definition:
-    type: Dependency
-    target: 掌握正规表达式和正规语言的基本定义及其关系。
+  Group1_Definition_Syntax_Semantics:
     skills:
     - 0
     - 1
-    - 6
-  Group2_Regular_Operations:
-    type: Progressive
-    target: 理解正规表达式的基本运算及其语义，并能够递归推导语言。
-    skills:
     - 2
+    - 9
+    target: 掌握正规表达式和正规语言的基础定义、语法规则和语义规则。
+    type: Dependency
+  Group2_Operations:
+    skills:
     - 3
     - 4
     - 5
-  Group3_Regular_Construction:
-    type: Application
-    target: 能够设计和构造满足特定需求的正规表达式并验证其语义。
-    skills:
-    - 10
-    - 11
-    - 9
-  Group4_Regular_Equivalence:
-    type: Contrast
-    target: 掌握正规表达式的等价性证明及其代数性质的应用。
-    skills:
-    - 12
-    - 13
-    - 14
-  Group5_Regular_Parsing:
+    - 7
+    target: 理解并熟练掌握正规表达式的三种代数运算及其应用。
     type: Progressive
-    target: 理解正规表达式的算符优先级并正确解析复杂表达式。
+  Group3_Design_Expressions:
     skills:
-    - 8
-    - 9
-    - 2
-  Group6_Regular_Closure:
+    - 6
+    - 13
+    - 17
+    target: 能够根据语言需求设计满足特定条件的正规表达式。
     type: Application
-    target: 掌握正规语言的闭包性质并应用于实际问题。
+  Group4_Algebraic_Laws:
+    skills:
+    - 11
+    - 12
+    - 14
+    target: 掌握正规表达式的代数定律及其验证方法。
+    type: Progressive
+  Group5_Advanced_Applications:
     skills:
     - 15
     - 16
-    - 6
-  Group7_Regular_Proof:
-    type: Related
-    target: 能够证明语言的正规性并验证其表达式的正确性。
+    - 18
+    target: 能够应用正规表达式解决复杂问题并验证其正确性。
+    type: Application
+  Group6_Syntax_Semantics_Relationship:
+    skills:
+    - 1
+    - 2
+    - 10
+    target: 理解正规表达式的语法与语义之间的关系。
+    type: Contrast
+  Group7_Operator_Priority:
     skills:
     - 7
+    - 8
+    - 11
+    target: 掌握正规表达式的算符优先级及其在表达式中的作用。
+    type: Related
+  Group8_Expression_Equivalence:
+    skills:
     - 12
     - 14
+    - 16
+    target: 能够分析和验证正规表达式的等价性。
+    type: Related
+  Group9_Comprehensive_Design:
+    skills:
+    - 6
+    - 13
+    - 15
+    - 17
+    target: 综合考察正规表达式的设计与应用能力。
+    type: Application
