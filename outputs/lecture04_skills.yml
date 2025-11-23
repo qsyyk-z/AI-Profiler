@@ -1,0 +1,72 @@
+skills:
+- '0: 能够形式化定义确定有限自动机（DFA）的五元组 A = (Q, Σ, δ, q0, F) 及其组成部分'
+- '1: 能够识别并区分有限状态集、输入符号集、转移函数、开始状态和终态集合'
+- '2: 能够通过转移图和转移表表示DFA的状态转移'
+- '3: 能够应用DFA接受输入符号串的过程，判断给定串是否被DFA接受'
+- '4: 能够形式化定义非确定有限自动机（NFA）的五元组 A = (Q, Σ, δ, q0, F) 及其组成部分'
+- '5: 能够识别并区分NFA与DFA的区别，特别是转移函数的定义'
+- '6: 能够通过转移图和转移表表示NFA的状态转移'
+- '7: 能够应用NFA接受输入符号串的过程，判断给定串是否被NFA接受'
+- '8: 能够形式化定义带ε-转移的非确定有限自动机（ε-NFA）的五元组 A = (Q, Σ, δ, q0, F) 及其组成部分'
+- '9: 能够识别并应用ε-NFA的ε-闭包概念'
+- '10: 能够通过转移图和转移表表示ε-NFA的状态转移'
+- '11: 能够应用ε-NFA接受输入符号串的过程，判断给定串是否被ε-NFA接受'
+- '12: 能够理解并应用DFA与NFA的等价性定理'
+- '13: 能够通过子集构造法将NFA转化为等价的DFA'
+- '14: 能够通过修改的子集构造法将ε-NFA转化为等价的DFA'
+- '15: 能够应用填表法计算DFA状态集的划分，识别等价状态'
+- '16: 能够通过合并等价状态优化DFA，得到最小化的DFA'
+- '17: 能够设计DFA、NFA和ε-NFA以接受特定语言'
+- '18: 能够证明给定的DFA、NFA或ε-NFA接受特定语言'
+- '19: 能够理解并应用集合上的等价关系与集合的划分'
+- '20: 能够设计自动机以实现特定的字符串搜索功能'
+groups:
+  Group1_DFA_Definition:
+    skills:
+    - 0
+    - 1
+    - 2
+    target: 掌握DFA的形式定义及其基本组成部分。
+    type: Dependency
+  Group2_NFA_Definition:
+    skills:
+    - 4
+    - 5
+    - 6
+    target: 掌握NFA的形式定义及其基本组成部分。
+    type: Dependency
+  Group3_Epsilon_NFA_Definition:
+    skills:
+    - 8
+    - 9
+    - 10
+    target: 掌握ε-NFA的形式定义及其基本组成部分。
+    type: Dependency
+  Group4_Automata_Equivalence:
+    skills:
+    - 12
+    - 13
+    - 14
+    target: 理解DFA、NFA和ε-NFA之间的等价性及其转换方法。
+    type: Contrast
+  Group5_Automata_Operation:
+    skills:
+    - 3
+    - 7
+    - 11
+    target: 应用自动机接受输入符号串的过程，判断给定串是否被自动机接受。
+    type: Application
+  Group6_Automata_Minimization:
+    skills:
+    - 15
+    - 16
+    - 19
+    target: 通过合并等价状态优化DFA，得到最小化的DFA。
+    type: Progressive
+  Group7_Automata_Design:
+    skills:
+    - 17
+    - 18
+    - 20
+    target: 设计自动机以接受特定语言并实现特定功能。
+    type: Application

@@ -1,0 +1,84 @@
+skills:
+- '0: 能够形式化定义正规语言的性质与运算，包括封闭性、补运算、交运算等'
+- '1: 能够理解并应用Pumping引理证明语言是否为正规语言'
+- '2: 能够根据DFA的状态数目分析字符串的“pumping”特性'
+- '3: 能够将字符串分解为x, y, z三部分，并验证其是否满足Pumping引理的条件'
+- '4: 能够通过反证法应用Pumping引理证明某些语言不是正规语言'
+- '5: 能够构造DFA以接受特定语言或其补语言'
+- '6: 能够根据正规表达式构造等价的DFA或NFA'
+- '7: 能够将正规语言的表达形式从正规表达式转换为DFA或NFA'
+- '8: 能够理解并应用正规语言的反向（reversal）操作'
+- '9: 能够理解并应用正规语言的同态（homomorphism）和反同态（inverse homomorphism）'
+- '10: 能够构造一个DFA以接受正规语言的反向语言'
+- '11: 能够通过DFA的状态转移表分析语言的性质'
+- '12: 能够设计DFA以接受两个语言的交集或差集'
+- '13: 能够理解正规语言的封闭性并证明其封闭性'
+- '14: 能够通过正规表达式的结构分析其表示的语言'
+- '15: 能够使用正规表达式描述语言并推导其补集语言'
+- '16: 能够通过DFA的状态转移图分析语言的等价性'
+- '17: 能够通过正规语言的性质设计判定算法，如判定语言是否为空或是否包含特定字符串'
+- '18: 能够结合正规语言的性质设计算法以判定两个语言的关系（如等价性或包含性）'
+- '19: 能够通过构造反例证明某些语言不满足正规语言的性质'
+- '20: 能够通过DFA的构造验证正规语言的封闭运算（如并、交、补）'
+groups:
+  Group1_Pumping_Lemma:
+    skills:
+    - 1
+    - 2
+    - 3
+    - 4
+    target: 理解并应用Pumping引理判断语言是否为正规语言。
+    type: Progressive
+  Group2_DFA_Construction:
+    skills:
+    - 5
+    - 6
+    - 7
+    - 10
+    target: 掌握DFA的构造方法以接受特定语言或其补语言。
+    type: Application
+  Group3_Regular_Language_Operations:
+    skills:
+    - 0
+    - 8
+    - 13
+    - 20
+    target: 理解正规语言的封闭性及其运算（如并、交、补）的性质。
+    type: Contrast
+  Group4_Homomorphism:
+    skills:
+    - 9
+    - 10
+    - 15
+    target: 理解并应用正规语言的同态和反同态操作。
+    type: Related
+  Group5_Proof_and_Analysis:
+    skills:
+    - 4
+    - 19
+    - 20
+    target: 通过反证法和构造反例分析语言的性质。
+    type: Application
+  Group6_Regular_Expression_Analysis:
+    skills:
+    - 6
+    - 7
+    - 14
+    - 15
+    target: 掌握正规表达式的构造与分析方法。
+    type: Progressive
+  Group7_DFA_Analysis:
+    skills:
+    - 11
+    - 12
+    - 16
+    - 18
+    target: 通过DFA的状态转移表分析语言的性质和关系。
+    type: Dependency
+  Group8_Algorithm_Design:
+    skills:
+    - 17
+    - 18
+    - 20
+    target: 结合正规语言的性质设计判定算法。
+    type: Application

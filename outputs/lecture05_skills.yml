@@ -1,0 +1,83 @@
+skills:
+- '0: 能够理解正规语言与有限状态自动机之间的等价关系'
+- '1: 能够解释正规表达式与有限自动机之间的转换原理'
+- '2: 能够描述正规表达式与 ε-NFA 的等价性'
+- '3: 能够应用 Thompson 构造法从正规表达式构造等价的 ε-NFA'
+- '4: 能够证明正规表达式与 ε-NFA 的等价性'
+- '5: 能够从 DFA 构造等价的正规表达式（路径迭代法）'
+- '6: 能够从 DFA 构造等价的正规表达式（状态消去法）'
+- '7: 能够分析路径迭代法和状态消去法的复杂度'
+- '8: 能够从 DFA 构造等价的 NFA'
+- '9: 能够从 NFA 构造等价的 DFA'
+- '10: 能够从 ε-NFA 构造等价的 DFA'
+- '11: 能够从 DFA 构造等价的 ε-NFA'
+- '12: 能够根据正规表达式的结构归纳构造 ε-NFA'
+- '13: 能够设计并验证正规表达式的表达式树'
+- '14: 能够通过状态消去法消除中间状态并构造正规表达式'
+- '15: 能够根据 DFA 的转移图推导出等价的正规表达式'
+- '16: 能够比较正规表达式构造方法的优缺点'
+- '17: 能够通过实例分析正规表达式与自动机的等价性'
+- '18: 能够推导正规表达式的归纳构造规则'
+- '19: 能够设计并实现从正规表达式到 ε-NFA 的转换算法'
+- '20: 能够通过正规表达式验证自动机的接受语言'
+groups:
+  Group1_Equivalence:
+    skills:
+    - 0
+    - 1
+    - 2
+    - 4
+    target: 掌握正规语言、正规表达式与有限状态自动机之间的等价性。
+    type: Dependency
+  Group2_Thompson_Construction:
+    skills:
+    - 2
+    - 3
+    - 4
+    - 19
+    target: 理解并掌握 Thompson 构造法从正规表达式构造等价 ε-NFA 的过程。
+    type: Progressive
+  Group3_RegularExpression_Construction:
+    skills:
+    - 5
+    - 6
+    - 7
+    - 15
+    target: 能够从 DFA 构造等价的正规表达式，掌握路径迭代法和状态消去法。
+    type: Application
+  Group4_Automata_Conversion:
+    skills:
+    - 8
+    - 9
+    - 10
+    - 11
+    target: 掌握 DFA、NFA 和 ε-NFA 之间的相互转换方法。
+    type: Related
+  Group5_Expression_Tree:
+    skills:
+    - 12
+    - 13
+    - 18
+    target: 理解正规表达式的表达式树结构及其归纳构造规则。
+    type: Progressive
+  Group6_State_Elimination:
+    skills:
+    - 6
+    - 14
+    - 15
+    target: 能够通过状态消去法消除中间状态并构造正规表达式。
+    type: Application
+  Group7_Algorithm_Comparison:
+    skills:
+    - 7
+    - 16
+    - 17
+    target: 比较正规表达式构造方法的优缺点及其适用场景。
+    type: Contrast
+  Group8_Proof_Validation:
+    skills:
+    - 4
+    - 17
+    - 20
+    target: 通过实例验证正规表达式与自动机的等价性。
+    type: Application
