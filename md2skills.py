@@ -91,14 +91,34 @@ class skill_agent:
                 import re
                 json_match = re.search(r'```json\n(.*?)\n```', response_content, re.DOTALL)
                 if json_match:
-                    result = json.loads(json_match.group(1))
+                    try:
+                        result = json.loads(json_match.group(1))
+                    except json.JSONDecodeError:
+                        try:
+                            import yaml
+                            result = yaml.safe_load(json_match.group(1))
+                        except:
+                            logger.error("无法从提取的内容解析为JSON或YAML")
+                            raise Exception("无法从提取的内容解析为JSON或YAML")
                 else:
                     json_match = re.search(r'\{(.*?)\}', response_content, re.DOTALL)
                     if json_match:
-                        result = json.loads(json_match.group(0))
+                        try:
+                            result = json.loads(json_match.group(0))
+                        except json.JSONDecodeError:
+                            try:
+                                import yaml
+                                result = yaml.safe_load(response_content)
+                            except:
+                                logger.error("无法从响应中解析为JSON或YAML")
+                                raise Exception("无法从响应中解析为JSON或YAML")
                     else:
-                        logger.error("无法从响应中提取有效的JSON")
-                        raise Exception("无法从响应中提取有效的JSON")
+                        try:
+                            import yaml
+                            result = yaml.safe_load(response_content)
+                        except:
+                            logger.error("无法从响应中提取有效的JSON或YAML")
+                            raise Exception("无法从响应中提取有效的JSON或YAML")
             
             logger.info(f"成功提取技能点和分组信息，共提取{len(result.get('skills', []))}个技能点")
             return result
@@ -123,7 +143,6 @@ class skill_agent:
             output_dir = Path(output_path).parent
             output_dir.mkdir(exist_ok=True)
             
-            # 确保skills在groups前面
             ordered_result_1 = {}
             ordered_result_2 = {}
             if 'skills' in result:

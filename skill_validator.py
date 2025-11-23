@@ -4,8 +4,10 @@ import logging
 from typing import Dict, List, Any, Tuple, Optional
 import re
 import time
-import openai
 import os
+import yaml
+from pathlib import Path
+from client import openai_client
 
 logging.basicConfig(
     level=logging.INFO,
@@ -15,355 +17,127 @@ logger = logging.getLogger(__name__)
 
 
 class SkillValidator:    
-    def __init__(self, threshold: float = 0.9, max_retries: int = 2):
-        """
-        初始化验证器
-        
-        Args:
-            threshold: 覆盖率阈值，默认90%
-            max_retries: 最大重试次数，默认2次
-        """
+    def __init__(self, threshold: float = 0.9):
         self.threshold = threshold
-        self.max_retries = max_retries
-        logger.info(f"技能点验证器初始化完成，覆盖率阈值设置为 {threshold * 100}%，最大重试次数: {max_retries}")
+        logger.info(f"技能点验证器初始化完成，覆盖率阈值设置为 {threshold * 100}%")
     
-    def load_structured_content(self, content_path: str) -> str:
-        
+    def load_md_content(self, md_path: str) -> str:
         try:
-            with open(content_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                result = []
-                for i in data:
-                    result.append(i['content'])
-                return result
+            with open(md_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            logger.info(f"成功加载markdown文件: {md_path}")
+            return content
         except Exception as e:
-            logger.error(f"加载结构化内容失败: {str(e)}")
+            logger.error(f"加载markdown文件失败: {str(e)}")
             return ""
     
-    def load_skills(self, skills_data: Dict[str, Any]) -> List[str]:
+    def load_skills_from_yaml(self, yaml_path: str) -> List[str]:
         skills_list = []
         try:
-            skills = skills_data.get('skills', [])
-            for skill in skills:
-                if isinstance(skill, dict):
-                    for value in skill.values():
-                        skills_list.append(str(value))
-                elif isinstance(skill, str):
-                    skills_list.append(skill)
-            logger.info(f"成功提取 {len(skills_list)} 个技能点")
+            with open(yaml_path, 'r', encoding='utf-8') as f:
+                data = yaml.safe_load(f)
+                skills = data.get('skills', [])
+                for skill in skills:
+                    if isinstance(skill, dict):
+                        for value in skill.values():
+                            skills_list.append(str(value))
+                    elif isinstance(skill, str):
+                        skills_list.append(skill)
+            logger.info(f"成功从YAML文件提取 {len(skills_list)} 个技能点")
         except Exception as e:
-            logger.error(f"加载技能点数据失败: {str(e)}")
+            logger.error(f"加载技能点YAML文件失败: {str(e)}")
         return skills_list
     
-    def calculate_coverage(self, original_content: str, skills: List[str]) -> float:
-        """
-        计算技能点在原始内容中的覆盖率
-        
-        Args:
-            original_content: 原始PPT内容
-            skills: 技能描述列表
-            
-        Returns:
-            覆盖率百分比 (0.0 - 1.0)
-        """
-        if not original_content or not skills:
-            logger.warning("原始内容或技能点列表为空，无法计算覆盖率")
+    def calculate_coverage(self, md_content: str, skills: List[str]) -> float:
+        if not md_content or not skills:
+            logger.warning("Markdown内容或技能点列表为空，无法计算覆盖率")
             return 0.0
         
-        # 预处理文本
-        def preprocess(text: str) -> str:
-            # 转小写
-            text = text.lower()
-            # 移除标点符号和多余空格
-            text = re.sub(r'[^\w\s]', '', text)
-            text = re.sub(r'\s+', ' ', text).strip()
-            return text
+        skills_text = "\n".join([f"- {skill}" for skill in skills])
         
-        # 分词
-        def tokenize(text: str) -> List[str]:
-            return text.split()
+        max_content_length = 2000
+        if len(md_content) > max_content_length:
+            md_content = md_content[:max_content_length] + "\n[内容过长，已截断]"
         
-        # 预处理原始内容
-        processed_content = preprocess(original_content)
-        content_tokens = tokenize(processed_content)
-        
-        # 计算覆盖率
-        covered_tokens = set()
-        total_tokens = len(content_tokens)
-        
-        if total_tokens == 0:
-            return 0.0
-        
-        # 提取关键短语
-        def extract_key_phrases(skill: str) -> List[str]:
-            """从技能点中提取关键短语（2-3个词的组合）"""
-            tokens = tokenize(preprocess(skill))
-            phrases = []
-            # 添加单个关键词
-            for token in tokens:
-                if len(token) > 2:  # 忽略太短的词
-                    phrases.append(token)
-            # 添加二元短语
-            for i in range(len(tokens) - 1):
-                if len(tokens[i]) > 2 and len(tokens[i+1]) > 2:
-                    phrases.append(f"{tokens[i]} {tokens[i+1]}")
-            # 添加三元短语
-            for i in range(len(tokens) - 2):
-                if len(tokens[i]) > 2 and len(tokens[i+1]) > 2 and len(tokens[i+2]) > 2:
-                    phrases.append(f"{tokens[i]} {tokens[i+1]} {tokens[i+2]}")
-            return phrases
-        
-        token_positions = {}
-        for i, token in enumerate(content_tokens):
-            if token not in token_positions:
-                token_positions[token] = []
-            token_positions[token].append(i)
-        
-        for skill in skills:
-            key_phrases = extract_key_phrases(skill)
-            
-            # 检查每个关键短语
-            for phrase in key_phrases:
-                # 对于单个词
-                if ' ' not in phrase:
-                    if phrase in token_positions:
-                        for pos in token_positions[phrase]:
-                            covered_tokens.add(pos)
-                # 对于短语（多个词）
-                else:
-                    phrase_tokens = phrase.split()
-                    # 检查短语在原始内容中的连续出现
-                    for i in range(len(content_tokens) - len(phrase_tokens) + 1):
-                        match = True
-                        for j, token in enumerate(phrase_tokens):
-                            if content_tokens[i+j] != token:
-                                match = False
-                                break
-                        if match:
-                            # 标记短语中所有词的位置
-                            for j in range(len(phrase_tokens)):
-                                covered_tokens.add(i+j)
-        
-        # 计算覆盖率
-        coverage = len(covered_tokens) / total_tokens
-        logger.info(f"计算得到的覆盖率为: {coverage * 100:.2f}%")
-        return coverage
-    
-    def validate_skills(self, structured_content_path: str, skills_data: Dict[str, Any]) -> Tuple[bool, float]:
-        # 加载数据
-        original_content = self.load_structured_content(structured_content_path)
-        skills = self.load_skills(skills_data)
-        
-        # 计算覆盖率
-        coverage = self.calculate_coverage(original_content, skills)
-        
-        # 判断是否通过
-        is_valid = coverage >= self.threshold
-        result = "通过" if is_valid else "不通过"
-        logger.info(f"技能点验证结果: {result}，覆盖率: {coverage * 100:.2f}%，阈值: {self.threshold * 100}%")
-        
-        return is_valid, coverage
-    
-    def generate_refinement_prompt(self, original_skills: Dict[str, Any], coverage: float, structured_content: str) -> str:
+        prompt = f"""你是一位专业的教育评估专家，请评估以下markdown内容（代表PPT内容）是否被给定的技能点列表完全覆盖。
+
+        请分析每一页或每个重要的内容块，判断它们是否至少被一个技能点覆盖，并计算总体覆盖率。
+
+        覆盖率评估标准：
+        1. 将markdown内容划分为逻辑上独立的内容块（如不同的页面、主题或章节）
+        2. 对于每个重要的内容块，如果它被至少一个技能点直接或间接覆盖（即该技能点要求掌握这部分内容），则该内容块的覆盖率为100%
+        3. 如果内容块的部分内容被覆盖，则覆盖率为50%
+        4. 如果内容块完全没有被任何技能点覆盖，则覆盖率为0%
+
+        请按照以下格式输出结果：
+        ```json
+        {
+        "content_blocks": [
+            {"block_summary": "内容块简要描述", "covered": true/false, "covering_skills": ["覆盖该内容的技能点索引或内容"]},
+            // 其他内容块...
+        ],
+        "overall_coverage": 总体覆盖率(0.0-1.0)
+        }
+        ```
+
+        Markdown内容：
+        ```
+        {md_content}
+        ```
+
+        技能点列表：
+        {skills_text}
         """
-        生成用于大模型二次生成的提示词
         
-        Args:
-            original_skills: 原始生成的技能点数据
-            coverage: 当前覆盖率
-            structured_content: 原始结构化内容（用于上下文）
-            
-        Returns:
-            用于二次生成的提示词
-        """
-        # 提取原始技能点
-        skills_list = self.load_skills(original_skills)
-        skills_text = "\n".join([f"- {skill}" for skill in skills_list])
-        
-        # 截取部分结构化内容作为上下文（避免token过多）
-        context_sample = structured_content[:2000]  # 只取前2000个字符作为上下文
-        
-        prompt = f"""请重新生成技能点列表，确保其在原始PPT内容中的覆盖率超过90%。
-
-当前覆盖率为: {coverage * 100:.2f}%，未能达到要求的90%。
-
-原始PPT内容片段：
-{context_sample}...
-
-请分析以下问题：
-1. 现有技能点是否遗漏了PPT中的重要知识点
-2. 技能点描述是否足够全面和具体
-3. 是否需要增加更多技能点来覆盖PPT的主要内容和核心概念
-
-原始生成的技能点：
-{skills_text}
-
-请重新生成更全面的技能点列表，确保能够覆盖PPT中的主要内容。
-
-输出格式要求：
-```json
-{{
-  "skills": [技能点描述列表],
-  "groups": [分组信息列表]
-}}
-```
-请确保输出的是有效的JSON格式，并且技能点描述要具体、全面。
-"""
-        
-        return prompt
-    
-    def call_llm_for_refinement(self, prompt: str, api_key: Optional[str] = None) -> Optional[Dict[str, Any]]:
-        """
-        调用大模型进行技能点二次生成
-        
-        Args:
-            prompt: 提示词
-            api_key: OpenAI API密钥（可选，如果环境变量中已设置）
-            
-        Returns:
-            生成的技能点数据字典，如果失败则返回None
-        """
         try:
-            # 设置API密钥
-            if api_key:
-                openai.api_key = api_key
-            elif 'OPENAI_API_KEY' in os.environ:
-                openai.api_key = os.environ['OPENAI_API_KEY']
-            else:
-                logger.error("未找到OpenAI API密钥")
-                return None
-            
-            logger.info("开始调用大模型进行技能点二次生成")
-            
-            # 调用OpenAI API
-            response = openai.ChatCompletion.create(
-                model="gpt-4o",  # 使用与主程序相同的模型
+            logger.info("调用大模型计算技能点覆盖率...")
+            response = openai_client.chat.completions.create(
+                model="gpt-4o",
                 messages=[
-                    {"role": "system", "content": "你是一个专业的教育内容分析助手，擅长从PPT内容中提取全面、准确的学习技能点。"},
+                    {"role": "system", "content": "你是一位专业的教育评估专家，擅长评估学习内容的覆盖率。"},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.7,
-                max_tokens=2000
+                temperature=0.3,
+                max_tokens=1500
             )
             
-            # 提取回复内容
-            content = response.choices[0].message.content.strip()
+            response_content = response.choices[0].message.content
             
-            # 提取JSON部分
-            json_match = re.search(r'```json\s*(.*?)\s*```', content, re.DOTALL)
+            # 提取JSON响应
+            json_match = re.search(r'```json\s*(.*?)\s*```', response_content, re.DOTALL)
             if json_match:
-                json_content = json_match.group(1)
+                try:
+                    coverage_data = json.loads(json_match.group(1))
+                    overall_coverage = coverage_data.get('overall_coverage', 0.0)
+                    
+                    # 记录未覆盖的内容块
+                    uncovered_blocks = []
+                    if 'content_blocks' in coverage_data:
+                        uncovered_blocks = [block for block in coverage_data['content_blocks'] if not block.get('covered', True)]
+                        if uncovered_blocks:
+                            logger.warning(f"发现{len(uncovered_blocks)}个未被技能点覆盖的重要内容块")
+                            for i, block in enumerate(uncovered_blocks[:3]):  # 只记录前3个未覆盖的内容块
+                                logger.warning(f"未覆盖内容块{i+1}: {block.get('block_summary', '未提供描述')}")
+                    
+                    logger.info(f"大模型计算的总体覆盖率为: {overall_coverage * 100:.2f}%")
+                    return overall_coverage
+                except json.JSONDecodeError:
+                    logger.error("无法解析大模型返回的JSON格式")
+                    return 0.0
             else:
-                # 尝试直接解析整个内容
-                json_content = content
-            
-            # 解析JSON
-            refined_data = json.loads(json_content)
-            logger.info("大模型二次生成成功")
-            return refined_data
-            
-        except json.JSONDecodeError as e:
-            logger.error(f"解析大模型返回的JSON失败: {str(e)}")
-            return None
+                logger.error("无法从大模型响应中提取有效的JSON")
+                return 0.0
+                
         except Exception as e:
-            logger.error(f"调用大模型进行二次生成时出错: {str(e)}")
-            return None
+            logger.error(f"调用大模型计算覆盖率时出错: {str(e)}")
+            return 0.0
     
-    def validate_and_refine_skills(self, structured_content_path: str, skills_data: Dict[str, Any], 
-                                 api_key: Optional[str] = None, max_retries: Optional[int] = None) -> Dict[str, Any]:
-        """
-        验证技能点覆盖率，如果不达标则触发二次生成，直到达标或达到最大重试次数
-        
-        Args:
-            structured_content_path: 结构化内容文件路径
-            skills_data: 初始技能点数据
-            api_key: OpenAI API密钥
-            max_retries: 最大重试次数（可选，默认使用初始化时的值）
-            
-        Returns:
-            最终的技能点数据（可能是原始数据或经过优化的数据）
-        """
-        if max_retries is None:
-            max_retries = self.max_retries
-        
-        current_skills = skills_data
-        retry_count = 0
-        
-        while retry_count < max_retries:
-            logger.info(f"开始第 {retry_count + 1} 轮验证")
-            
-            # 执行验证
-            is_valid, coverage = self.validate_skills(structured_content_path, current_skills)
-            
-            if is_valid:
-                logger.info("技能点覆盖率达标，无需进一步优化")
-                return current_skills
-            
-            # 如果不达标且还有重试次数，则触发二次生成
-            retry_count += 1
-            if retry_count > max_retries:
-                logger.warning(f"已达到最大重试次数 {max_retries}，返回当前最佳技能点数据")
-                break
-            
-            logger.info(f"覆盖率不达标，开始第 {retry_count} 次二次生成")
-            
-            # 加载结构化内容用于提示词
-            structured_content = self.load_structured_content(structured_content_path)
-            
-            # 生成优化提示词
-            refinement_prompt = self.generate_refinement_prompt(
-                current_skills, coverage, structured_content
-            )
-            
-            # 调用大模型进行二次生成
-            refined_skills = self.call_llm_for_refinement(refinement_prompt, api_key)
-            
-            if refined_skills:
-                # 更新当前技能点数据
-                current_skills = refined_skills
-                # 添加间隔避免API限流
-                time.sleep(2)
-            else:
-                logger.error("二次生成失败，保持当前技能点数据")
-                break
-        
-        return current_skills
-
-
 # 主程序集成接口函数
-def validate_skills_coverage(structured_content_path: str, skills_data: Dict[str, Any], 
-                           api_key: Optional[str] = None, threshold: float = 0.9,
-                           max_retries: int = 2) -> Dict[str, Any]:
-    """
-    验证技能点覆盖率并在必要时进行优化的便捷函数（供主程序调用）
+def validate_skills_coverage(yaml_path: str, md_path: str, threshold: float = 0.9) -> Tuple[bool, float]:
     
-    Args:
-        structured_content_path: 结构化内容文件路径
-        skills_data: 初始技能点数据
-        api_key: OpenAI API密钥
-        threshold: 覆盖率阈值
-        max_retries: 最大重试次数
-        
-    Returns:
-        经过验证（可能被优化）的技能点数据
-    """
-    # 创建验证器实例
-    validator = SkillValidator(threshold=threshold, max_retries=max_retries)
+    validator = SkillValidator(threshold=threshold)
     
-    # 执行验证和优化
-    final_skills = validator.validate_and_refine_skills(
-        structured_content_path, skills_data, api_key=api_key
-    )
+    coverage = validator.calculate_coverage(yaml_path, md_path)
+    is_valid = coverage >= threshold
     
-    return final_skills
-
-
-def get_coverage_metrics(structured_content_path: str, skills_data: Dict[str, Any]) -> Dict[str, Any]:
-    validator = SkillValidator()
-    is_valid, coverage = validator.validate_skills(structured_content_path, skills_data)
-    
-    return {
-        "coverage": coverage,
-        "is_valid": is_valid,
-        "threshold": validator.threshold,
-    }
+    return is_valid, coverage
